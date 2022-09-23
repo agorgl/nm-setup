@@ -8,7 +8,9 @@ BROKER_PORT=${3:-8883}
 DASHBOARD_PORT=${4:-8080}
 
 # Directory containing volume data
-NMDIR=$HOME/.local/share/netmaker
+[ "${EUID:-$(id -u)}" -eq 0 ] \
+    && NMDIR=/var/lib/netmaker \
+    || NMDIR=$HOME/.local/share/netmaker
 
 # Create state directory if not exists
 [ ! -d $NMDIR ] && mkdir -p $NMDIR

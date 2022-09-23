@@ -2,7 +2,9 @@
 set -e
 
 # Directory containing volume data
-NMDIR=$HOME/.local/share/netmaker
+[ "${EUID:-$(id -u)}" -eq 0 ] \
+    && NMDIR=/var/lib/netmaker \
+    || NMDIR=$HOME/.local/share/netmaker
 
 # Remove previous pod if exists
 echo "Removing netmaker pod ..."
