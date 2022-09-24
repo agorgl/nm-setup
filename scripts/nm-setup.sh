@@ -159,10 +159,13 @@ http {
     }
 
     server {
-        listen       8080;
+        listen       8080 ssl;
         server_name dashboard.$DOMAIN;
 
         #access_log  /var/log/nginx/host.access.log  main;
+
+        ssl_certificate /etc/nginx/ssl/selfsigned.crt;
+        ssl_certificate_key /etc/nginx/ssl/selfsigned.key;
 
         location / {
             proxy_pass   http://127.0.0.1:80;
