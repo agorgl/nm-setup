@@ -39,6 +39,7 @@ podman run -d --pod netmaker --name netmaker-server \
     -e NODE_ID=netmaker-server \
     -e MQ_HOST=localhost \
     -e MQ_PORT=$BROKER_PORT \
+    -e TELEMETRY=off \
     -e VERBOSITY="3" \
     --cap-add NET_ADMIN \
     --cap-add NET_RAW \
