@@ -9,10 +9,11 @@ CERT_FILE=/tmp/nm-${SERVER%:*}.pem
 SERVER=$(echo $TOKEN | base64 -d | jq -r .apiconnstring)
 openssl s_client -showcerts -connect $SERVER </dev/null 2>/dev/null | openssl x509 -outform PEM > $CERT_FILE
 
-# Launch netclient
-podman run -d --name netclient-$(openssl rand -hex 4) \
-    -v $CERT_FILE:/selfsigned.pem \
-    -e SSL_CERT_FILE=/selfsigned.pem \
+# Generate random postfix for container name
+CONTAINER_NAME=netclient-$(openssl rand -hex 4)
+
+# Create netclient container
+podman create --name $CONTAINER_NAME \
     -e TOKEN=$TOKEN \
     --cap-add NET_ADMIN \
     --cap-add NET_RAW \
@@ -22,3 +23,11 @@ podman run -d --name netclient-$(openssl rand -hex 4) \
     --sysctl net.ipv6.conf.all.disable_ipv6=0 \
     --sysctl net.ipv6.conf.all.forwarding=1 \
     gravitl/netclient:latest
+
+# Append certificate to container system certificates
+podman cp $CONTAINER_NAME:/etc/ssl/certs/ca-certificates.crt /tmp/nc-certs.crt
+cat $CERT_FILE >> /tmp/nc-certs.crt
+podman cp /tmp/nc-certs.crt $CONTAINER_NAME:/etc/ssl/certs/ca-certificates.crt
+
+# Start netclient container
+podman start $CONTAINER_NAME
