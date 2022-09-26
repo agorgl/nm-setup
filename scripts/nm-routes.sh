@@ -11,7 +11,7 @@ all_routes=""
 for container in $containers; do
     # Get container ip and routes
     container_ip=$(podman inspect $container -f '{{ .NetworkSettings.IPAddress }}')
-    container_routes=$(podman exec $container ip route | grep nm- | awk '{print $1}' | grep '/' | xargs printf "%s:$container_ip\n")
+    container_routes=$(podman exec $container ip route | grep nm- | awk '{print $1}' | grep '/' | xargs -r printf "%s:$container_ip\n")
     all_routes+=$container_routes
 
     # Get existing routes
