@@ -16,6 +16,18 @@ done
     && NMDIR=/var/lib/netmaker \
     || NMDIR=$HOME/.local/share/netmaker
 
+# Remove systemd units
+units=$(systemctl list-unit-files --all | grep 'netmaker-server\|netclient-\|netmaker-routes' | awk '{print $1}')
+for unit in $units; do
+    echo "Disabling and stopping $unit ..."
+    systemctl disable --now $unit
+
+    echo "Removing $unit"
+    unit_path=$(systemctl show -P FragmentPath $unit)
+    rm $unit_path
+done
+systemctl daemon-reload
+
 # Remove previous pod if exists
 echo "Removing netmaker pod ..."
 podman pod exists netmaker && podman pod rm -f netmaker
