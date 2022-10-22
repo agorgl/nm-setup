@@ -17,7 +17,7 @@ done
     || NMDIR=$HOME/.local/share/netmaker
 
 # Remove systemd units
-units=$(systemctl list-unit-files --all | grep 'netmaker-server\|netclient-\|netmaker-routes' | awk '{print $1}')
+units=$(systemctl list-unit-files --all | grep 'netmaker-\|netclient-' | awk '{print $1}')
 for unit in $units; do
     echo "Disabling and stopping $unit ..."
     systemctl disable --now $unit

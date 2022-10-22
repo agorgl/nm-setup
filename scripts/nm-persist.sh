@@ -5,7 +5,7 @@ NETMAKER_DIR=/var/lib/netmaker
 SYSTEMD_UNIT_DIR=/etc/systemd/system
 
 # Gather applicable containers
-containers=$(podman ps --format '{{ .Names }}' | grep 'netmaker-server\|netclient-')
+containers=$(podman ps --format '{{ .Names }}' | grep 'netmaker-\|netclient-')
 
 # For each container
 for container in $containers; do
